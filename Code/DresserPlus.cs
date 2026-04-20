@@ -1,10 +1,9 @@
-using Sandbox;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DresserPlus;
+namespace Sandbox;
 
 /// <summary>
 /// Dresses a Citizen or Human using one of four clothing sources (Manual, LocalUser, OwnerUser, Hybrid).
@@ -76,7 +75,7 @@ public sealed class DresserPlus : Component, Component.ExecuteInEditor
 	/// <summary>
 	/// Controls the body's height scale.
 	/// </summary>
-	[Property, Group( "Parameters" ), Range( 0.5f, 1.5f )]
+	[Property, Group( "Parameters" ), Range( 0.8f, 1.2f )]
 	[ShowIf( nameof(ShowHeightOption), true )]
 	[Change( nameof(OnManualChange) )]
 	[Sync]
@@ -248,7 +247,7 @@ public sealed class DresserPlus : Component, Component.ExecuteInEditor
 	private async ValueTask AddManualClothing( ClothingContainer clothing, CancellationToken token )
 	{
 		clothing.AddRange( Clothing );
-		clothing.Height = ManualHeight.Remap( 0.5f, 1.5f, 0, 1, true );
+		clothing.Height = ManualHeight.Remap( 0.8f, 1.2f, 0, 1, true );
 		clothing.Age = ManualAge;
 		clothing.Tint = ManualTint;
 
@@ -342,7 +341,7 @@ public sealed class DresserPlus : Component, Component.ExecuteInEditor
 
 			await clothing.ApplyAsync( BodyTarget, token );
 
-			ManualHeight = clothing.Height.Remap( 0, 1, 0.5f, 1.5f, true );
+			ManualHeight = clothing.Height.Remap( 0, 1, 0.8f, 1.2f, true );
 			ManualTint = clothing.Tint;
 			ManualAge = clothing.Age;
 
