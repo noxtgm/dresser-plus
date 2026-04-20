@@ -76,7 +76,7 @@ public sealed class DresserPlus : Component, Component.ExecuteInEditor
 	/// <summary>
 	/// Controls the body's height scale.
 	/// </summary>
-	[Property, Group( "Parameters" ), Range( 0.5f, 2.0f )]
+	[Property, Group( "Parameters" ), Range( 0.5f, 1.5f )]
 	[ShowIf( nameof(ShowHeightOption), true )]
 	[Change( nameof(OnManualChange) )]
 	[Sync]
@@ -130,6 +130,7 @@ public sealed class DresserPlus : Component, Component.ExecuteInEditor
 	private bool ShowManualOptions => Source is ClothingSource.Manual or ClothingSource.Hybrid;
 	private bool ShowOwnerOptions => Source is ClothingSource.OwnerUser or ClothingSource.Hybrid;
 	private bool ShowHeightOption => ShowManualOptions && ApplyHeightScale;
+	private bool NeedsNetworkOwner => Source is ClothingSource.OwnerUser or ClothingSource.Hybrid;
 
 	private CancellationTokenSource _cts;
 
@@ -140,7 +141,7 @@ public sealed class DresserPlus : Component, Component.ExecuteInEditor
 		if ( !BodyTarget.IsValid() )
 			BodyTarget = GetComponentInChildren<SkinnedModelRenderer>();
 
-		_ = Apply();
+		_ = ApplyWhenReady();
 	}
 
 	protected override void OnEnabled()
@@ -224,7 +225,7 @@ public sealed class DresserPlus : Component, Component.ExecuteInEditor
 				return new ClothingContainer();
 			case ClothingSource.Hybrid:
 				{
-					 var clothing = Network.Owner != null ? ClothingContainer.CreateFromConnection( Network.Owner, RemoveUnownedItems ) : new ClothingContainer();
+					var clothing = Network.Owner != null ? ClothingContainer.CreateFromConnection( Network.Owner, RemoveUnownedItems ) : new ClothingContainer();
 
 					if ( StrippedCategories is { Count: > 0 } )
 						clothing.Clothing.RemoveAll( e => StrippedCategories.Contains( e.Clothing.Category ) );
@@ -247,7 +248,7 @@ public sealed class DresserPlus : Component, Component.ExecuteInEditor
 	private async ValueTask AddManualClothing( ClothingContainer clothing, CancellationToken token )
 	{
 		clothing.AddRange( Clothing );
-		clothing.Height = ManualHeight.Remap( 0.5f, 2.0f, 0, 1, true );
+		clothing.Height = ManualHeight.Remap( 0.5f, 1.5f, 0, 1, true );
 		clothing.Age = ManualAge;
 		clothing.Tint = ManualTint;
 
@@ -266,9 +267,26 @@ public sealed class DresserPlus : Component, Component.ExecuteInEditor
 	/// <summary>
 	/// Called when <see cref="ManualHeight"/>, <see cref="ManualAge"/>, or <see cref="ManualTint"/> is changed.
 	/// </summary>
-	public void OnManualChange()
+	private void OnManualChange()
 	{
 		ApplyAttributes();
+	}
+	
+	/// <summary>
+	/// Waits for the network owner to be assigned (if required by the current <see cref="Source"/>), then applies clothing.
+	/// </summary>
+	private async ValueTask ApplyWhenReady()
+	{
+		if ( NeedsNetworkOwner )
+		{
+			while ( Network.Owner is null )
+			{
+				if ( !this.IsValid() ) return;
+				await Task.Frame();
+			}
+		}
+
+		await Apply();
 	}
 
 	/// <summary>
@@ -324,7 +342,7 @@ public sealed class DresserPlus : Component, Component.ExecuteInEditor
 
 			await clothing.ApplyAsync( BodyTarget, token );
 
-			ManualHeight = clothing.Height.Remap( 0, 1, 0.5f, 2.0f, true );
+			ManualHeight = clothing.Height.Remap( 0, 1, 0.5f, 1.5f, true );
 			ManualTint = clothing.Tint;
 			ManualAge = clothing.Age;
 
