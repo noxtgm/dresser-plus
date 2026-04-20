@@ -88,7 +88,7 @@ if ( dresser.IsDressing ) { /* ... */ }
 
 ## 📄 License
 
-[Unlicense](https://choosealicense.com/licenses/unlicense/)
+[CC0](https://choosealicense.com/licenses/cc0-1.0/)
 
 <br>
 
