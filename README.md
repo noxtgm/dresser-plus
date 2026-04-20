@@ -51,7 +51,7 @@ An enhanced version of the built-in [Dresser](https://github.com/Facepunch/sbox-
 
 * Download the [DresserPlus.cs](https://github.com/noxtgm/dresser-plus/blob/77bc57a21139906d7f4edab7a7aa4e1a28219da9/Code/DresserPlus.cs) C# script and add it to your project's `Code/` folder
 
-> Once you've done either one of those, add the **Dresser Plus** component to a GameObject with a Citizen or Human body (SkinnedModelRenderer).
+> Once you've done either one of those, add the **Dresser Plus** component to a GameObject with a Citizen or Human body.
 > Set the `BodyTarget` to the body's `SkinnedModelRenderer` (auto-detected from children if left empty), pick a clothing source, and you're done.
 
 ## 🛜 API
@@ -75,7 +75,7 @@ if ( dresser.IsDressing ) { /* ... */ }
 
 ## ⚙️ Properties
 
-* **BodyTarget** - The `SkinnedModelRenderer` of the body to dress (auto-detected if empty)
+* **BodyTarget** - The `SkinnedModelRenderer` of the body to dress *(auto-detected if empty)*
 * **Source** - Which clothing source to use
 * **RemoveUnownedItems** - Strip items not in the owner's Steam Inventory *(OwnerUser/Hybrid only)*
 * **ApplyHeightScale** - Whether height scaling is active
