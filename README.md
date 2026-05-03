@@ -8,7 +8,7 @@ An enhanced version of the built-in [Dresser](https://github.com/Facepunch/sbox-
 
 * Body attributes networked and updated in real time across all clients
 * Clothing sources are now easier to grasp for beginners
-* A new Manual/OwnerUser hybrid clothing source
+* A new hybrid (Manual & OwnerUser at the same time) clothing source
 * Parallel workshop clothing loading
 
 ### Clothing Sources
